@@ -10,6 +10,9 @@ class app extends CI_Controller {
 
 	public function api_rs_rujukan()
 	{
+		header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+
 		$query = $this->db->query("SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
 									b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
 									FROM rs_rujukan a 
@@ -46,6 +49,9 @@ class app extends CI_Controller {
 
 	public function api_rs_rujukan_filter()
 	{
+		header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+		
 		$kelurahan = $this->input->get("kelurahan");
 		$kecamatan = $this->input->get("kecamatan");
 		$kota = $this->input->get("kota");

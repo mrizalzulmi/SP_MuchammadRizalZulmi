@@ -16,8 +16,7 @@ class app extends CI_Controller {
 		$query = $this->db->query("SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
 									b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
 									FROM rs_rujukan a 
-									LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
-									AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan")->result_array();
+									LEFT JOIN rs_dki b ON a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan AND a.kota_madya=b.kota")->result_array();
 
 		if ($query) {
 			$list_rs = [];
@@ -51,7 +50,7 @@ class app extends CI_Controller {
 	{
 		header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=UTF-8");
-		
+
 		$kelurahan = $this->input->get("kelurahan");
 		$kecamatan = $this->input->get("kecamatan");
 		$kota = $this->input->get("kota");
@@ -60,29 +59,25 @@ class app extends CI_Controller {
 			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
 										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
 										FROM rs_rujukan a 
-										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
-										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan
+										LEFT JOIN rs_dki b ON a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan AND a.kota_madya=b.kota
 										WHERE a.kelurahan LIKE '%".$kelurahan."%'";
 		} else if($kecamatan) {
 			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
 										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
 										FROM rs_rujukan a 
-										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
-										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan
+										LEFT JOIN rs_dki b ON a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan AND a.kota_madya=b.kota
 										WHERE a.kecamatan LIKE '%".$kecamatan."%'";
 		} else if($kota) {
 			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
 										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
 										FROM rs_rujukan a 
-										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
-										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan
+										LEFT JOIN rs_dki b ON a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan AND a.kota_madya=b.kota
 										WHERE a.kota_madya LIKE '%".$kota."%'";
 		} else {
 			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
 										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
 										FROM rs_rujukan a 
-										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
-										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan";
+										LEFT JOIN rs_dki b ON a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan AND a.kota_madya=b.kota";
 		}
 		
 		$query = $this->db->query($sql)->result_array();

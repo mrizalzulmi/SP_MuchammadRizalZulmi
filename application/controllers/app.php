@@ -10,30 +10,103 @@ class app extends CI_Controller {
 
 	public function api_rs_rujukan()
 	{
-		$query = $this->db->query("SELECT a.*, b.* FROM rs_rujukan a LEFT JOIN rs_dki b ON a.alamat=b.alamat_rumah_sakit OR a.kelurahan=b.kelurahan OR a.kecamatan=b.kecamatan")->result_array();
+		$query = $this->db->query("SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
+									b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
+									FROM rs_rujukan a 
+									LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
+									AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan")->result_array();
 
 		if ($query) {
-			foreach ($query as $hsl) {
-				
-                $data = array(
-                    'nama_rumah_sakit' => $hsl['nama_rumah_sakit'],
-                    'jenis_rumah_sakit' => $hsl['jenis_rumah_sakit'], 
-                    'alamat_rumah_sakit' => $hsl['alamat_rumah_sakit'],
-					'kelurahan' => $hsl['kelurahan'],
-					'kecamatan' => $hsl['kecamatan'],
-					'kota' => $hsl['kota'],
-					'kode_pos' => $hsl['kode_pos'],
-					'nomor_telepon' => $hsl['nomor_telepon'],
-					'nomor_fax' => $hsl['nomor_fax'],
-					'no_hp_direktur' => $hsl['no_hp_direktur'],
-					'website' => $hsl['website'],
-					'email' => $hsl['email']
-    	        );
-              }
-        }
-		$json_data = json_encode($data);
+			$list_rs = [];
+			foreach($query as $rowss){
 
-		echo $json_data;
+				$list_rs[] = [
+					"nama_rumah_sakit" => $rowss["nama_rumah_sakit"],
+					"jenis_rumah_sakit" => $rowss["jenis_rumah_sakit"],
+					"alamat_rumah_sakit" => $rowss["alamat"],
+					"kelurahan" =>$rowss["kelurahan"],
+					"kecamatan" =>$rowss["kecamatan"],
+					"kota/kab" =>$rowss["kota_madya"],
+					"kodepos" =>$rowss["kode_pos"],
+					"telepon" =>$rowss["nomor_telepon"],
+					"nomor_fax" =>$rowss["nomor_fax"],
+					"website" =>$rowss["website"],
+					"email" =>$rowss["email"]
+				];
+			}
+        }
+		$data = [
+			"success" => true,
+			"message" => "Data Berhasil di Ambil",
+			"data" => $list_rs
+		];
+
+		echo json_encode($data, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+	}
+
+	public function api_rs_rujukan_filter()
+	{
+		$kelurahan = $this->input->get("kelurahan");
+		$kecamatan = $this->input->get("kecamatan");
+		$kota = $this->input->get("kota");
+
+		if($kelurahan) {
+			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
+										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
+										FROM rs_rujukan a 
+										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
+										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan
+										WHERE a.kelurahan LIKE '%".$kelurahan."%'";
+		} else if($kecamatan) {
+			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
+										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
+										FROM rs_rujukan a 
+										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
+										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan
+										WHERE a.kecamatan LIKE '%".$kecamatan."%'";
+		} else if($kota) {
+			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
+										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
+										FROM rs_rujukan a 
+										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
+										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan
+										WHERE a.kota_madya LIKE '%".$kota."%'";
+		} else {
+			$sql = "SELECT a.nama_rumah_sakit, a.alamat, a.kota_madya, a.kelurahan, a.kecamatan,
+										b.jenis_rumah_sakit, b.kode_pos, b.nomor_telepon, b.nomor_fax, b.website, b.email
+										FROM rs_rujukan a 
+										LEFT JOIN rs_dki b ON a.nama_rumah_sakit=b.nama_rumah_sakit 
+										AND a.kelurahan=b.kelurahan AND a.kecamatan=b.kecamatan";
+		}
+		
+		$query = $this->db->query($sql)->result_array();
+
+		if ($query) {
+			$list_rs = [];
+			foreach($query as $rowss){
+
+				$list_rs[] = [
+					"nama_rumah_sakit" => $rowss["nama_rumah_sakit"],
+					"jenis_rumah_sakit" => $rowss["jenis_rumah_sakit"],
+					"alamat_rumah_sakit" => $rowss["alamat"],
+					"kelurahan" =>$rowss["kelurahan"],
+					"kecamatan" =>$rowss["kecamatan"],
+					"kota/kab" =>$rowss["kota_madya"],
+					"kodepos" =>$rowss["kode_pos"],
+					"telepon" =>$rowss["nomor_telepon"],
+					"nomor_fax" =>$rowss["nomor_fax"],
+					"website" =>$rowss["website"],
+					"email" =>$rowss["email"]
+				];
+			}
+        }
+		$data = [
+			"success" => true,
+			"message" => "Data Berhasil di Ambil",
+			"data" => $list_rs
+		];
+
+		echo json_encode($data, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
 	}
 	 
 	// fungsi untuk menarik data dari API RS Rujukan Covid 19
